@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
+import './index.css'; // Tailwind styles
 import 'ol/ol.css'; // Importante: CSS do OpenLayers global
 
 ReactDOM.createRoot(document.getElementById('root')).render(

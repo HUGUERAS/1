@@ -8,6 +8,7 @@ $ErrorActionPreference = "Stop"
 # --- CONFIGURAÇÃO ---
 $appName = "bemreal-ai1" # Prefixo para recursos ÚNICOS
 $location = "brazilsouth"
+$swaLocation = "eastus2" # Location específic for Static Web Apps (not available in brazilsouth)
 $rgName = "rg-$appName"
 $randomId = Get-Random -Minimum 1000 -Maximum 9999
 $dbPassword = "BemReal$randomId!Secure" 
@@ -121,7 +122,7 @@ Write-Host "`nCreating Static Web App..."
 az staticwebapp create `
     --name $swaName `
     --resource-group $rgName `
-    --location $location `
+    --location $swaLocation `
     --sku Free
 
 $swaToken = az staticwebapp secrets list --name $swaName --resource-group $rgName --query "properties.apiKey" -o tsv
