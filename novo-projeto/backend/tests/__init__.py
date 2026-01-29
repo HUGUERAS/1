@@ -1,0 +1,1 @@
+# Arquivo marcador para pytest reconhecer packages

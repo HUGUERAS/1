@@ -1,0 +1,16 @@
+{
+  "$schema": "https://aka.ms/azure/static-web-apps-cli/schema",
+  "configurations": {
+    "ativo-real": {
+      "appName": "ativoreal-web-bfrrbwmkfi6xe",
+      "resourceGroup": "rg-ativoreal-chile",
+      "appLocation": "./dist",
+      "outputLocation": "./dist",
+      "appBuildCommand": "npm run build",
+      "apiLocation": "",
+      "apiBuildCommand": "",
+      "run": "npm run dev",
+      "appDevserverUrl": "http://localhost:5173"
+    }
+  }
+}

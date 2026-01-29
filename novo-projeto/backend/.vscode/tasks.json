@@ -1,0 +1,17 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Install Azure CLI",
+			"type": "shell",
+			"command": "winget",
+			"args": [
+				"install",
+				"azure-cli"
+			],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		}
+	]
+}

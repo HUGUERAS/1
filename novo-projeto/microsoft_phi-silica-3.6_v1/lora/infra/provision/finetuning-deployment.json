@@ -1,0 +1,18 @@
+WARNING: C:\Users\huugo\topdemais\microsoft_phi-silica-3.6_v1\lora\infra\provision\finetuning.bicep(137,9) : Warning BCP035: The specified "object" declaration is missing the following required properties: "criterionType". If this is a resource type definition inaccuracy, report it using https://aka.ms/bicep-type-issues. [https://aka.ms/bicep/core-diagnostics#BCP035]
+
+C:\Users\huugo\topdemais\microsoft_phi-silica-3.6_v1\lora\infra\provision\finetuning.bicep(162,61) : Warning BCP318: The value of type "Microsoft.Insights/components | null" may be null at the start of the deployment, which would cause this access expression (and the overall deployment with it) to fail. [https://aka.ms/bicep/core-diagnostics#BCP318]
+
+C:\Users\huugo\topdemais\microsoft_phi-silica-3.6_v1\lora\infra\provision\finetuning.bicep(163,59) : Warning BCP318: The value of type "Microsoft.Insights/components | null" may be null at the start of the deployment, which would cause this access expression (and the overall deployment with it) to fail. [https://aka.ms/bicep/core-diagnostics#BCP318]
+
+C:\Users\huugo\topdemais\microsoft_phi-silica-3.6_v1\lora\infra\provision\finetuning.bicep(189,36) : Warning BCP318: The value of type "Microsoft.Insights/components | null" may be null at the start of the deployment, which would cause this access expression (and the overall deployment with it) to fail. [https://aka.ms/bicep/core-diagnostics#BCP318]
+
+C:\Users\huugo\topdemais\microsoft_phi-silica-3.6_v1\lora\infra\provision\finetuning.bicep(240,29) : Warning BCP318: The value of type "Microsoft.Insights/components | null" may be null at the start of the deployment, which would cause this access expression (and the overall deployment with it) to fail. [https://aka.ms/bicep/core-diagnostics#BCP318]
+
+C:\Users\huugo\topdemais\microsoft_phi-silica-3.6_v1\lora\infra\provision\finetuning.bicep(262,33) : Warning BCP318: The value of type "Microsoft.Insights/components | null" may be null at the start of the deployment, which would cause this access expression (and the overall deployment with it) to fail. [https://aka.ms/bicep/core-diagnostics#BCP318]
+
+C:\Users\huugo\topdemais\microsoft_phi-silica-3.6_v1\lora\infra\provision\finetuning.bicep(304,78) : Warning BCP318: The value of type "Microsoft.Insights/components | null" may be null at the start of the deployment, which would cause this access expression (and the overall deployment with it) to fail. [https://aka.ms/bicep/core-diagnostics#BCP318]
+
+C:\Users\huugo\topdemais\microsoft_phi-silica-3.6_v1\lora\infra\provision\finetuning.bicep(305,80) : Warning BCP318: The value of type "Microsoft.Insights/components | null" may be null at the start of the deployment, which would cause this access expression (and the overall deployment with it) to fail. [https://aka.ms/bicep/core-diagnostics#BCP318]
+
+
+ERROR: {"status":"Failed","error":{"code":"DeploymentFailed","target":"/subscriptions/1f6ce75c-e8a7-4246-9225-b4ab1509c3a5/resourceGroups/rg-ml-finetuning/providers/Microsoft.Resources/deployments/finetuning","message":"At least one resource deployment operation failed. Please list deployment operations for details. Please see https://aka.ms/arm-deployment-operations for usage details.","details":[{"code":"InvalidRequestParameterWithDetails","message":"ContainerAppsConfiguration.DaprAIConnectionString is invalid.  DaprAIConnectionString can not be set when AppInsightsConfiguration has been set, please set DaprAIConnectionString to null."}]}}

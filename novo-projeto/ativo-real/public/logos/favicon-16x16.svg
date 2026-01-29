@@ -1,0 +1,19 @@
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="16" height="16" rx="3" fill="#001F3F"/>
+  
+  <!-- Monogram "B" -->
+  <text x="8" y="12" 
+        font-family="'Montserrat', 'Helvetica Neue', sans-serif" 
+        font-size="12" 
+        font-weight="700" 
+        fill="#CD7F32" 
+        text-anchor="middle">B</text>
+  
+  <!-- Border -->
+  <rect width="16" height="16" rx="3" 
+        stroke="#CD7F32" 
+        stroke-width="1" 
+        fill="none" 
+        opacity="0.5"/>
+</svg>

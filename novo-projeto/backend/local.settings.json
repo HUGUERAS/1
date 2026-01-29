@@ -1,0 +1,8 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "python",
+    "DATABASE_URL": "postgresql://admin:senha_segura_dev@psql-bemreal-ai1-4764.postgres.database.azure.com:5432/ativoreal_geo"
+  }
+}

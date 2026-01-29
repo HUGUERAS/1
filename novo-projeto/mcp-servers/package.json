@@ -1,0 +1,32 @@
+{
+  "name": "ativo-real-mcp-servers",
+  "version": "1.0.0",
+  "description": "Model Context Protocol servers para Ativo Real - Gestão de projetos topográficos",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "start:filesystem": "node dist/filesystem-server.js",
+    "start:azure": "node dist/azure-server.js",
+    "start:cosmosdb": "node dist/cosmosdb-server.js",
+    "dev": "tsc --watch"
+  },
+  "keywords": ["mcp", "azure", "gis", "topografia", "cosmos-db"],
+  "author": "Ativo Real",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^0.5.0",
+    "@azure/cosmos": "^4.0.0",
+    "@azure/arm-resources": "^5.2.0",
+    "@azure/identity": "^4.0.0",
+    "@azure/storage-blob": "^12.17.0",
+    "proj4": "^2.11.0",
+    "shpjs": "^4.0.4",
+    "xml2js": "^0.6.2",
+    "fast-xml-parser": "^4.3.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/proj4": "^2.5.5",
+    "typescript": "^5.3.3"
+  }
+}

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🌱 Ativo Real - Demo</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    body {
+      overflow-x: hidden;
+    }
+
+    .screen {
+      display: none;
+      min-height: 100vh;
+      padding: 40px;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    /* LANDING SCREEN - AZUL ESCURO */
+    #landing {
+      background-color: #1a2332;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    #landing h1 {
+      color: white;
+      font-size: 48px;
+      margin-bottom: 60px;
+    }
+
+    .cards-container {
+      display: flex;
+      gap: 30px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .card {
+      background-color: white;
+      padding: 40px;
+      border-radius: 12px;
+      cursor: pointer;
+      width: 250px;
+      text-align: center;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      transition: transform 0.2s;
+    }
+
+    .card:hover {
+      transform: scale(1.05);
+    }
+
+    .card-icon {
+      font-size: 48px;
+      margin-bottom: 20px;
+    }
+
+    .card h2 {
+      color: #1a2332;
+      margin-bottom: 10px;
+    }
+
+    .card p {
+      color: #666;
+      font-size: 14px;
+    }
+
+    /* TOPO SCREEN - BEGE CLARO */
+    #topo {
+      background-color: #f5e6d3;
+    }
+
+    /* OWNER SCREEN - BRANCO */
+    #owner {
+      background-color: #ffffff;
+    }
+
+    /* FARMER SCREEN - VERDE CLARO */
+    #farmer {
+      background-color: #e8f5e9;
+    }
+
+    .back-button {
+      background-color: #1a2332;
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-bottom: 40px;
+    }
+
+    .back-button:hover {
+      background-color: #2a3342;
+    }
+
+    .panel-title {
+      font-size: 72px;
+      color: #1a2332;
+      text-align: center;
+      margin-top: 100px;
+    }
+
+    .panel-description {
+      text-align: center;
+      margin-top: 40px;
+      font-size: 24px;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TELA INICIAL - LANDING -->
+  <div id="landing" class="screen active">
+    <h1>🌱 Ativo Real</h1>
+    <div class="cards-container">
+      
+      <!-- Cartão Proprietário -->
+      <div class="card" onclick="navigateTo('owner')">
+        <div class="card-icon">🏠</div>
+        <h2>Proprietário</h2>
+        <p>Gerencie suas propriedades</p>
+      </div>
+
+      <!-- Cartão Agricultor -->
+      <div class="card" onclick="navigateTo('farmer')">
+        <div class="card-icon">🚜</div>
+        <h2>Agricultor</h2>
+        <p>Acesse áreas rurais</p>
+      </div>
+
+      <!-- Cartão Topógrafo -->
+      <div class="card" onclick="navigateTo('topo')">
+        <div class="card-icon">📐</div>
+        <h2>Topógrafo</h2>
+        <p>Ferramentas técnicas</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- TELA TOPÓGRAFO - BEGE -->
+  <div id="topo" class="screen">
+    <button class="back-button" onclick="navigateTo('landing')">← Voltar</button>
+    <h1 class="panel-title">📐 Painel do Topógrafo</h1>
+    <p class="panel-description">Ferramentas de medição e geolocalização</p>
+  </div>
+
+  <!-- TELA PROPRIETÁRIO - BRANCO -->
+  <div id="owner" class="screen">
+    <button class="back-button" onclick="navigateTo('landing')">← Voltar</button>
+    <h1 class="panel-title">🏠 Painel do Proprietário</h1>
+    <p class="panel-description">Gerencie suas propriedades e documentos</p>
+  </div>
+
+  <!-- TELA AGRICULTOR - VERDE -->
+  <div id="farmer" class="screen">
+    <button class="back-button" onclick="navigateTo('landing')">← Voltar</button>
+    <h1 class="panel-title">🚜 Painel do Agricultor</h1>
+    <p class="panel-description">Informações sobre áreas de cultivo</p>
+  </div>
+
+  <script>
+    // Função de navegação entre telas
+    function navigateTo(screenName) {
+      // Remove a classe 'active' de todas as telas
+      document.querySelectorAll('.screen').forEach(screen => {
+        screen.classList.remove('active');
+      });
+
+      // Adiciona a classe 'active' na tela desejada
+      document.getElementById(screenName).classList.add('active');
+    }
+  </script>
+
+</body>
+</html>

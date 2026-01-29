@@ -1,0 +1,243 @@
+name: Fine-Tuning Pipeline
+
+on:
+  workflow_dispatch:
+    inputs:
+      model_method:
+        description: 'Training method'
+        required: true
+        default: 'lora'
+        type: choice
+        options:
+          - lora
+          - soft_prompt
+      dataset_path:
+        description: 'Path to training dataset (JSONL)'
+        required: true
+        type: string
+      test_dataset_path:
+        description: 'Path to test dataset (JSONL)'
+        required: true
+        type: string
+      deploy_infra:
+        description: 'Deploy infrastructure'
+        required: true
+        default: true
+        type: boolean
+
+env:
+  AZURE_RESOURCE_GROUP: 'rg-ml-finetuning'
+  AZURE_LOCATION: 'eastus'
+
+jobs:
+  validate-datasets:
+    name: Validate Datasets
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install jsonschema
+
+      - name: Validate training dataset
+        run: |
+          python .github/scripts/validate_dataset.py \
+            --file "${{ github.event.inputs.dataset_path }}" \
+            --type train
+
+      - name: Validate test dataset
+        run: |
+          python .github/scripts/validate_dataset.py \
+            --file "${{ github.event.inputs.test_dataset_path }}" \
+            --type test
+
+  deploy-infrastructure:
+    name: Deploy Azure Infrastructure
+    runs-on: ubuntu-latest
+    needs: validate-datasets
+    if: ${{ github.event.inputs.deploy_infra == 'true' }}
+    outputs:
+      storage_account: ${{ steps.deploy.outputs.STORAGE_ACCOUNT_NAME }}
+      file_share: ${{ steps.deploy.outputs.FILE_SHARE_NAME }}
+      aca_job: ${{ steps.deploy.outputs.ACA_JOB_NAME }}
+      app_insights: ${{ steps.deploy.outputs.APP_INSIGHTS_NAME }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Create Resource Group
+        run: |
+          az group create \
+            --name ${{ env.AZURE_RESOURCE_GROUP }} \
+            --location ${{ env.AZURE_LOCATION }}
+
+      - name: Deploy Bicep
+        id: deploy
+        run: |
+          cd microsoft_phi-silica-3.6_v1/${{ github.event.inputs.model_method }}/infra/provision
+          
+          DEPLOYMENT_OUTPUT=$(az deployment group create \
+            --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+            --template-file finetuning.bicep \
+            --parameters finetuning.parameters.json \
+            --query 'properties.outputs' \
+            --output json)
+          
+          echo "STORAGE_ACCOUNT_NAME=$(echo $DEPLOYMENT_OUTPUT | jq -r '.STORAGE_ACCOUNT_NAME.value')" >> $GITHUB_OUTPUT
+          echo "FILE_SHARE_NAME=$(echo $DEPLOYMENT_OUTPUT | jq -r '.FILE_SHARE_NAME.value')" >> $GITHUB_OUTPUT
+          echo "ACA_JOB_NAME=$(echo $DEPLOYMENT_OUTPUT | jq -r '.ACA_JOB_NAME.value')" >> $GITHUB_OUTPUT
+          echo "APP_INSIGHTS_NAME=$(echo $DEPLOYMENT_OUTPUT | jq -r '.APP_INSIGHTS_NAME.value')" >> $GITHUB_OUTPUT
+
+  upload-datasets:
+    name: Upload Datasets to Azure Storage
+    runs-on: ubuntu-latest
+    needs: deploy-infrastructure
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Upload training dataset
+        run: |
+          RUN_ID=$(date +%Y%m%d_%H%M%S)_${{ github.run_number }}
+          
+          az storage file upload \
+            --account-name ${{ needs.deploy-infrastructure.outputs.storage_account }} \
+            --share-name ${{ needs.deploy-infrastructure.outputs.file_share }} \
+            --source "${{ github.event.inputs.dataset_path }}" \
+            --path "$RUN_ID/dataset/train.json" \
+            --auth-mode login
+
+          az storage file upload \
+            --account-name ${{ needs.deploy-infrastructure.outputs.storage_account }} \
+            --share-name ${{ needs.deploy-infrastructure.outputs.file_share }} \
+            --source "${{ github.event.inputs.test_dataset_path }}" \
+            --path "$RUN_ID/dataset/test.json" \
+            --auth-mode login
+          
+          echo "RUN_ID=$RUN_ID" >> $GITHUB_ENV
+
+      - name: Upload config YAML
+        run: |
+          az storage file upload \
+            --account-name ${{ needs.deploy-infrastructure.outputs.storage_account }} \
+            --share-name ${{ needs.deploy-infrastructure.outputs.file_share }} \
+            --source "microsoft_phi-silica-3.6_v1/${{ github.event.inputs.model_method }}/${{ github.event.inputs.model_method }}.yaml" \
+            --path "${{ env.RUN_ID }}/${{ github.event.inputs.model_method }}.yaml" \
+            --auth-mode login
+
+  run-finetuning:
+    name: Execute Fine-Tuning Job
+    runs-on: ubuntu-latest
+    needs: [deploy-infrastructure, upload-datasets]
+    steps:
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Start ACA Job
+        run: |
+          az containerapp job start \
+            --name ${{ needs.deploy-infrastructure.outputs.aca_job }} \
+            --resource-group ${{ env.AZURE_RESOURCE_GROUP }}
+
+      - name: Monitor Job Execution
+        run: |
+          JOB_NAME=${{ needs.deploy-infrastructure.outputs.aca_job }}
+          
+          while true; do
+            STATUS=$(az containerapp job execution list \
+              --name $JOB_NAME \
+              --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+              --query '[0].properties.status' \
+              --output tsv)
+            
+            echo "Job status: $STATUS"
+            
+            if [ "$STATUS" == "Succeeded" ]; then
+              echo "✅ Fine-tuning completed successfully"
+              exit 0
+            elif [ "$STATUS" == "Failed" ]; then
+              echo "❌ Fine-tuning job failed"
+              exit 1
+            fi
+            
+            sleep 60
+          done
+
+  publish-model:
+    name: Publish Trained Model
+    runs-on: ubuntu-latest
+    needs: [deploy-infrastructure, run-finetuning]
+    steps:
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Download trained model
+        run: |
+          RUN_ID=$(date +%Y%m%d_%H%M%S)_${{ github.run_number }}
+          
+          az storage file download-batch \
+            --account-name ${{ needs.deploy-infrastructure.outputs.storage_account }} \
+            --source ${{ needs.deploy-infrastructure.outputs.file_share }} \
+            --destination ./trained_model \
+            --pattern "$RUN_ID/save_dir/*" \
+            --auth-mode login
+
+      - name: Tag model version
+        run: |
+          MODEL_VERSION="phi-silica-3.6-${{ github.event.inputs.model_method }}-$(date +%Y%m%d)"
+          echo "MODEL_VERSION=$MODEL_VERSION" >> $GITHUB_ENV
+          
+          # Upload to GitHub Releases or Azure ML Registry
+          echo "✅ Model tagged as: $MODEL_VERSION"
+
+      - name: Create release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ env.MODEL_VERSION }}
+          release_name: Model ${{ env.MODEL_VERSION }}
+          body: |
+            ## Fine-Tuned Model Release
+            
+            **Method**: ${{ github.event.inputs.model_method }}
+            **Training Dataset**: ${{ github.event.inputs.dataset_path }}
+            **Training Date**: $(date +%Y-%m-%d)
+            
+            ### Metrics
+            View metrics in [Azure Application Insights](https://portal.azure.com/#@/resource/subscriptions/.../providers/Microsoft.Insights/components/${{ needs.deploy-infrastructure.outputs.app_insights }})
+
+  notify:
+    name: Send Notification
+    runs-on: ubuntu-latest
+    needs: [publish-model]
+    if: always()
+    steps:
+      - name: Notification
+        run: |
+          if [ "${{ needs.publish-model.result }}" == "success" ]; then
+            echo "✅ Fine-tuning pipeline completed successfully"
+          else
+            echo "❌ Fine-tuning pipeline failed"
+          fi

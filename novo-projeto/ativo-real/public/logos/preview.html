@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preview: Logo Bem Real - Todas as Variações</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #B0B0B0;
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 48px;
+            margin-bottom: 20px;
+            color: #CD7F32;
+            font-weight: 300;
+        }
+
+        h1 strong {
+            font-weight: 700;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 18px;
+            margin-bottom: 60px;
+            opacity: 0.8;
+            letter-spacing: 2px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+
+        .card {
+            background: rgba(0, 31, 63, 0.6);
+            border: 2px solid #CD7F32;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(205, 127, 50, 0.4);
+        }
+
+        .card h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #CD7F32;
+        }
+
+        .card p {
+            font-size: 14px;
+            opacity: 0.7;
+            margin-bottom: 20px;
+        }
+
+        .logo-preview {
+            background: #001F3F;
+            border-radius: 8px;
+            padding: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 250px;
+            margin-bottom: 20px;
+        }
+
+        .logo-preview img {
+            max-width: 100%;
+            height: auto;
+            filter: drop-shadow(0 4px 12px rgba(205, 127, 50, 0.3));
+        }
+
+        .specs {
+            background: rgba(176, 176, 176, 0.1);
+            border-radius: 6px;
+            padding: 15px;
+            text-align: left;
+            font-family: 'Consolas', monospace;
+            font-size: 12px;
+        }
+
+        .specs div {
+            margin: 5px 0;
+        }
+
+        .specs strong {
+            color: #CD7F32;
+        }
+
+        .color-palette {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 60px;
+            flex-wrap: wrap;
+        }
+
+        .color-swatch {
+            text-align: center;
+        }
+
+        .color-box {
+            width: 100px;
+            height: 100px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border: 2px solid rgba(176, 176, 176, 0.3);
+        }
+
+        .color-name {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #B0B0B0;
+        }
+
+        .color-hex {
+            font-family: 'Consolas', monospace;
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .usage-examples {
+            background: rgba(0, 31, 63, 0.6);
+            border: 2px solid #CD7F32;
+            border-radius: 12px;
+            padding: 40px;
+            margin-bottom: 40px;
+        }
+
+        .usage-examples h2 {
+            font-size: 32px;
+            margin-bottom: 30px;
+            color: #CD7F32;
+            text-align: center;
+        }
+
+        .usage-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .usage-item {
+            background: #001F3F;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .usage-item h3 {
+            color: #CD7F32;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 60px;
+            padding-top: 40px;
+            border-top: 1px solid rgba(176, 176, 176, 0.2);
+        }
+
+        .footer a {
+            color: #CD7F32;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 36px;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <h1>Bem <strong>Real</strong></h1>
+        <p class="subtitle">PREVIEW DA IDENTIDADE VISUAL</p>
+
+        <!-- Color Palette -->
+        <div class="usage-examples">
+            <h2>🎨 Paleta de Cores Oficial</h2>
+            <div class="color-palette">
+                <div class="color-swatch">
+                    <div class="color-box" style="background: #001F3F;"></div>
+                    <div class="color-name">Azul Marinho</div>
+                    <div class="color-hex">#001F3F</div>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box" style="background: #CD7F32;"></div>
+                    <div class="color-name">Bronze Fosco</div>
+                    <div class="color-hex">#CD7F32</div>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-box" style="background: #B0B0B0;"></div>
+                    <div class="color-name">Titânio Metálico</div>
+                    <div class="color-hex">#B0B0B0</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Logo Variations -->
+        <div class="grid">
+            <!-- Logo Completa 256px -->
+            <div class="card">
+                <h2>Logo Completa</h2>
+                <p>Versão principal com escudo + texto</p>
+                <div class="logo-preview">
+                    <img src="logos/logo-bemreal-completa.svg" alt="Logo Bem Real Completa" width="256" height="256">
+                </div>
+                <div class="specs">
+                    <div><strong>Tamanho:</strong> 256×256px</div>
+                    <div><strong>Uso:</strong> Cabeçalhos, splash screens</div>
+                    <div><strong>Formato:</strong> SVG (escalável)</div>
+                    <div><strong>Arquivo:</strong> logo-bemreal-completa.svg</div>
+                </div>
+            </div>
+
+            <!-- Símbolo Isolado 128px -->
+            <div class="card">
+                <h2>Símbolo Isolado</h2>
+                <p>Apenas o escudo 3D</p>
+                <div class="logo-preview">
+                    <img src="logos/logo-bemreal-simbolo.svg" alt="Logo Bem Real Símbolo" width="128" height="128">
+                </div>
+                <div class="specs">
+                    <div><strong>Tamanho:</strong> 128×128px</div>
+                    <div><strong>Uso:</strong> App icons, toolbars</div>
+                    <div><strong>Formato:</strong> SVG (escalável)</div>
+                    <div><strong>Arquivo:</strong> logo-bemreal-simbolo.svg</div>
+                </div>
+            </div>
+
+            <!-- Favicon 32px -->
+            <div class="card">
+                <h2>Favicon Grande</h2>
+                <p>Versão simplificada</p>
+                <div class="logo-preview">
+                    <img src="logos/favicon-32x32.svg" alt="Favicon 32px" width="64" height="64">
+                </div>
+                <div class="specs">
+                    <div><strong>Tamanho:</strong> 32×32px</div>
+                    <div><strong>Uso:</strong> Browser tabs, taskbar</div>
+                    <div><strong>Formato:</strong> SVG (escalável)</div>
+                    <div><strong>Arquivo:</strong> favicon-32x32.svg</div>
+                </div>
+            </div>
+
+            <!-- Monograma 16px -->
+            <div class="card">
+                <h2>Monograma "B"</h2>
+                <p>Versão minimalista</p>
+                <div class="logo-preview">
+                    <img src="logos/favicon-16x16.svg" alt="Favicon 16px" width="48" height="48">
+                </div>
+                <div class="specs">
+                    <div><strong>Tamanho:</strong> 16×16px</div>
+                    <div><strong>Uso:</strong> Favicon pequeno, system tray</div>
+                    <div><strong>Formato:</strong> SVG (escalável)</div>
+                    <div><strong>Arquivo:</strong> favicon-16x16.svg</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Usage Examples -->
+        <div class="usage-examples">
+            <h2>💡 Exemplos de Uso</h2>
+            <div class="usage-grid">
+                <div class="usage-item">
+                    <h3>Cabeçalho Web</h3>
+                    <img src="logos/logo-bemreal-completa.svg" alt="Exemplo" width="128" height="128">
+                    <p style="margin-top: 15px; font-size: 14px; opacity: 0.8;">Logo completa (256px) com fundo azul marinho</p>
+                </div>
+                <div class="usage-item">
+                    <h3>App Mobile</h3>
+                    <img src="logos/logo-bemreal-simbolo.svg" alt="Exemplo" width="96" height="96">
+                    <p style="margin-top: 15px; font-size: 14px; opacity: 0.8;">Símbolo isolado (128px) para ícones de app</p>
+                </div>
+                <div class="usage-item">
+                    <h3>Browser Tab</h3>
+                    <img src="logos/favicon-32x32.svg" alt="Exemplo" width="64" height="64">
+                    <p style="margin-top: 15px; font-size: 14px; opacity: 0.8;">Favicon simplificado (32px)</p>
+                </div>
+                <div class="usage-item">
+                    <h3>System Icon</h3>
+                    <img src="logos/favicon-16x16.svg" alt="Exemplo" width="48" height="48">
+                    <p style="margin-top: 15px; font-size: 14px; opacity: 0.8;">Monograma "B" (16px)</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Design Specs -->
+        <div class="usage-examples">
+            <h2>📐 Especificações Técnicas</h2>
+            <div style="font-family: 'Consolas', monospace; font-size: 14px; line-height: 1.8;">
+                <div style="margin-bottom: 20px;">
+                    <strong style="color: #CD7F32;">Elemento Principal:</strong><br>
+                    Escudo topográfico 3D com 5 níveis de curvas de nível (isóbaras)
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <strong style="color: #CD7F32;">Stroke Weight:</strong> 2px - 3px<br>
+                    <strong style="color: #CD7F32;">Line Caps:</strong> Round<br>
+                    <strong style="color: #CD7F32;">Line Joins:</strong> Round
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <strong style="color: #CD7F32;">Efeitos:</strong><br>
+                    • Highlights metálicos (Bronze Claro #E5A35C)<br>
+                    • Sombras de profundidade 3D<br>
+                    • Opacidade gradual (0.6 → 1.0)
+                </div>
+                <div>
+                    <strong style="color: #CD7F32;">Tipografia:</strong><br>
+                    • Principal: Montserrat (300 + 700)<br>
+                    • Técnica: Roboto Mono<br>
+                    • Tagline: Letter-spacing 2px
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>
+                <strong style="color: #CD7F32;">Bem Real © 2026</strong><br>
+                Geoprocessamento e Topografia Técnica<br>
+                <a href="../GUIA_ESTILO_LOGO.md" target="_blank">📖 Ver Guia de Estilo Completo</a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Add loading animation
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    card.style.transition = 'all 0.5s ease-out';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+    </script>
+</body>
+</html>
