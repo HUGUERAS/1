@@ -4,6 +4,7 @@
 # Automates: Postgres + PostGIS, Function App (Python), Static Web App (React)
 
 $ErrorActionPreference = "Stop"
+Set-Location $PSScriptRoot
 
 # --- CONFIGURAÇÃO ---
 $appName = "bemreal-ai1" # Prefixo para recursos ÚNICOS
@@ -110,7 +111,7 @@ $funcUrl = "https://$funcAppName.azurewebsites.net/api"
 Write-Host "`nBackend URL: $funcUrl"
 
 Write-Host "Re-building Frontend with Production API URL..."
-Push-Location frontend
+Push-Location ativo-real
 $env:VITE_API_URL = $funcUrl
 npm install
 npm run build
@@ -133,12 +134,12 @@ Write-Host "Deploying Frontend Content..."
 # Alternativa leve: Usar 'az staticwebapp app up' se suportado ou GitHub Actions.
 # Vamos assumir que swa cli está disponivel ou pedir para instalar.
 try {
-    swa deploy ./frontend/dist --env production --deployment-token $swaToken --app-name $swaName
+    swa deploy ./ativo-real/dist --env production --deployment-token $swaToken --app-name $swaName
 }
 catch {
     Write-Host "SWA CLI não encontrado ou falhou. Tentando instalar..."
     npm install -g @azure/static-web-apps-cli
-    swa deploy ./frontend/dist --env production --deployment-token $swaToken --app-name $swaName
+    swa deploy ./ativo-real/dist --env production --deployment-token $swaToken --app-name $swaName
 }
 
 # 7. Configurar CORS no Backend para aceitar o Frontend

@@ -8,7 +8,8 @@ import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import XYZ from 'ol/source/XYZ';
 import OSM from 'ol/source/OSM';
-import { fromLonLat } from 'ol/proj';
+import { fromLonLat, toLonLat } from 'ol/proj';
+import { Polygon } from 'ol/geom';
 import { Draw, Modify, Snap, Select } from 'ol/interaction';
 import { click } from 'ol/events/condition';
 import { FullScreen, MousePosition, ScaleLine, defaults as defaultControls } from 'ol/control';
@@ -1000,6 +1001,73 @@ const GlobalMap: React.FC<GlobalMapProps> = ({ userProfile, projetoId, onLogout 
           <TopoIcon Icon={SaveDraftIcon} size={24} isActive={true} ariaLabel="Salvar Rascunho" />
           Salvar Rascunho
         </button>
+
+        {/* Validar na Nuvem (Botão Novo - Agente 3) */}
+        <button 
+          style={{...menuBtnStyle(false), backgroundColor: '#28a745', color: 'white'}} 
+          onClick={async ()=>{
+            const feats = vectorSource.getFeatures();
+            if (feats.length === 0) return alert("❌ Desenhe um lote primeiro!");
+            
+            // Só pega o primeiro por enquanto
+            const geom = feats[0].getGeometry();
+            if (!geom || geom.getType() !== 'Polygon') return alert("❌ Apenas polígonos são aceitos.");
+
+            const poly = geom as Polygon;
+            
+            // Converter coordenadas para Lat/Lon
+            // OpenLayers usa [Lon, Lat], API espera [Lon, Lat] (tupla)
+            // Mas o backend Python espera: "coordinates": [[lon, lat], ...]
+            // O código Python conserta a ordem se precisar, mas vamos mandar o padrão GeoJSON
+            
+            const rawCoords = poly.getCoordinates()[0];
+            const coordsLatLon = rawCoords.map(c => {
+               const ll = toLonLat(c);
+               return [ll[0], ll[1]]; // lon, lat
+            });
+
+            const payload = {
+               matricula: "RASCUNHO-" + Date.now(),
+               proprietario: "Topógrafo (Teste)",
+               projeto_id: projetoId ? projetoId : null,
+               coordinates: coordsLatLon
+            };
+
+            try {
+               alert("⏳ Enviando para validação no servidor...");
+               const res = await fetch('https://func-bemreal-ai1-1406.azurewebsites.net/api/lotes', {
+                  method: 'POST',
+                  headers: {'Content-Type': 'application/json'},
+                  body: JSON.stringify(payload)
+               });
+               const data = await res.json();
+               
+               if(!res.ok) {
+                 // Erro Técnico ou Bloqueio Crítico (se houver)
+                 alert(`❌ Erro ao salvar:\n\n${data.detail || JSON.stringify(data)}`);
+               } else {
+                 // 30/01/2026: Cliente recebe feedback APENAS se houver sobreposição SIGEF (informativo)
+                 // Para outros avisos (frestas, vizinhos), o silêncio é mantido para não confundir o leigo.
+                 const avisosSigef = (data.warnings || []).filter((w: string) => w.includes("SIGEF") || w.includes("INCRA"));
+                 
+                 if (avisosSigef.length > 0) {
+                     alert(`✅ Esboço salvo com sucesso!\n\nℹ️ NOTA INFORMATIVA:\nO sistema identificou que este desenho toca uma área certificada (SIGEF). Não se preocupe, o topógrafo analisará este detalhe técnico.`);
+                 } else {
+                     alert("✅ Esboço enviado com sucesso!");
+                 }
+                 // Limpar mapa ou atualizar status...
+               }
+
+            } catch(e) {
+               alert("❌ Erro ao conectar com o servidor.");
+               console.error(e);
+            }
+          }}
+        >
+          <TopoIcon Icon={ImportIcon} size={24} isActive={true} ariaLabel="Validar" />
+          Validar & Gravar (Nuvem)
+        </button>
+
         <button 
           style={menuBtnStyle(false)} 
           onClick={()=>{

@@ -341,23 +341,46 @@ export default function DashboardTopografo({ onAbrirProjeto, onVoltar }: Dashboa
             </button>
           </div>
 
-          <div style={{ 
-            display: 'grid', 
-            gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', 
-            gap: 'var(--space-6)',
-            animation: 'fadeInUp 0.8s ease-out 0.2s backwards'
-          }}>
-            {projetos.map((p, index) => (
-              <div 
-                key={p.id} 
-                style={{ 
-                  background: 'var(--glass-background)', 
-                  backdropFilter: 'var(--glass-blur)',
-                  border: 'var(--glass-border)',
-                  padding: 'var(--space-6)', 
-                  borderRadius: 'var(--radius-xl)', 
-                  boxShadow: 'var(--shadow-lg)', 
-                  borderLeft: `4px solid var(--color-primary)`,
+          {[
+            { 
+              titulo: 'Trabalhos Únicos (Retificação, Geo)', 
+              lista: projetos.filter(p => !['desmembramento', 'loteamento'].includes(p.tipo)) 
+            },
+            { 
+              titulo: 'Trabalhos Múltiplos (Desmembramentos)', 
+              lista: projetos.filter(p => ['desmembramento', 'loteamento'].includes(p.tipo)) 
+            }
+          ].map((secao) => (
+            secao.lista.length > 0 && (
+              <div key={secao.titulo} style={{ marginBottom: '40px' }}>
+                <h3 style={{ 
+                  color: 'var(--color-text-primary)', 
+                  fontSize: '20px', 
+                  marginBottom: '15px', 
+                  borderLeft: '4px solid var(--gradient-bronze)', 
+                  paddingLeft: '10px',
+                  fontWeight: 'bold'
+                }}>
+                  {secao.titulo} <span style={{ fontSize: '14px', color: 'var(--color-text-secondary)', fontWeight: 'normal' }}>({secao.lista.length})</span>
+                </h3>
+                
+                <div style={{ 
+                  display: 'grid', 
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', 
+                  gap: 'var(--space-6)',
+                  animation: 'fadeInUp 0.8s ease-out 0.2s backwards'
+                }}>
+                  {secao.lista.map((p, index) => (
+                    <div 
+                      key={p.id} 
+                      style={{ 
+                        background: 'var(--glass-background)', 
+                        backdropFilter: 'var(--glass-blur)',
+                        border: 'var(--glass-border)',
+                        padding: 'var(--space-6)', 
+                        borderRadius: 'var(--radius-xl)', 
+                        boxShadow: 'var(--shadow-lg)', 
+                        borderLeft: `4px solid var(--color-primary)`,
                   transition: 'all var(--transition-base)',
                   animation: `fadeInUp 0.6s ease-out ${0.3 + index * 0.1}s backwards`,
                   cursor: 'pointer'
@@ -412,11 +435,14 @@ export default function DashboardTopografo({ onAbrirProjeto, onVoltar }: Dashboa
                     <TopoIcon Icon={ManagePanelIcon} size={24} color="white" ariaLabel="Gestão" />
                     Gestão
                   </button>
-                  <button onClick={() => excluirProjeto(p.id)} style={{ ...btnStyle('#fee'), color: 'red', border: '1px solid red', padding: '10px' }}>🗑️</button>
+                        <button onClick={() => excluirProjeto(p.id)} style={{ ...btnStyle('#fee'), color: 'red', border: '1px solid red', padding: '10px' }}>🗑️</button>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
-            ))}
-          </div>
+            )
+          ))}
         </>
       )}
 

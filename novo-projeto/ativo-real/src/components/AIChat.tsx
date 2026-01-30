@@ -43,7 +43,7 @@ export default function AIChat({ context = 'general' }: AIChatProps) {
     setIsLoading(true);
 
     try {
-      const response = await fetch('/api/ai/chat', {
+      const response = await fetch('https://func-bemreal-ai1-1406.azurewebsites.net/api/ai/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

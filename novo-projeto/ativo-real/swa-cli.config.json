@@ -4,10 +4,10 @@
     "ativo-real": {
       "appName": "ativoreal-web-bfrrbwmkfi6xe",
       "resourceGroup": "rg-ativoreal-chile",
-      "appLocation": "./dist",
-      "outputLocation": "./dist",
+      "appLocation": ".",
+      "outputLocation": "dist",
       "appBuildCommand": "npm run build",
-      "apiLocation": "",
+      "apiLocation": "../backend",
       "apiBuildCommand": "",
       "run": "npm run dev",
       "appDevserverUrl": "http://localhost:5173"

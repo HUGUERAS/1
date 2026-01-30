@@ -1,6 +1,7 @@
 from pydantic import BaseModel, validator
-from typing import List, Tuple, Optional, Any
+from typing import List, Tuple, Optional, Any, Dict
 from datetime import datetime
+from uuid import UUID
 
 class LoteBase(BaseModel):
     matricula: str
@@ -20,7 +21,11 @@ class LoteCreate(LoteBase):
 
 class LoteResponse(LoteBase):
     id: int
-    area_ha: Optional[float]
+    area_ha: Optional[float] = None
+    perimetro_m: Optional[float] = None
+    warnings: List[str] = []
+    metadata_validacao: Optional[Dict[str, Any]] = None
+    token_acesso: Optional[UUID] = None
     criado_em: Optional[datetime]
     
     class Config:
@@ -29,12 +34,11 @@ class LoteResponse(LoteBase):
 class ProjetoBase(BaseModel):
     nome: str
     descricao: Optional[str] = None
-    matricula_mae: Optional[str] = None
+    tipo: Optional[str] = "INDIVIDUAL"
 
 class ProjetoCreate(ProjetoBase):
-    coordinates: List[Tuple[float, float]] = [] # Optional for creation if empty geom
+    coordinates: List[Tuple[float, float]] = [] 
 
-    # If coordinates are provided
     @validator("coordinates")
     def validate_polygon_closure(cls, v):
         if not v:
@@ -48,6 +52,6 @@ class ProjetoCreate(ProjetoBase):
 class ProjetoResponse(ProjetoBase):
     id: int
     criado_em: Optional[datetime]
-
+    
     class Config:
         from_attributes = True
