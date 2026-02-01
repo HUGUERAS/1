@@ -44,24 +44,6 @@ interface DashboardProps {
   onVoltar?: () => void;
 }
 
-// --- DADOS INICIAIS ---
-const MOCK_INICIAL: Projeto[] = [
-  { 
-    id: 1, titulo: "Desmembramento Família Souza", local: "Gleba Rio Claro - SP", proprietario: "José Souza", 
-    dataCriacao: "2023-10-25", status: "em_andamento", tipo: "desmembramento", area: 45.8, progresso: 65, 
-    vizinhos: [
-      { id: 1, nome: "João Silva (Fazenda Norte)", telefone: "(19) 98765-4321", status: "assinado", linkConvite: "https://ativo.real/convite/abc123" }
-    ],
-    financeiro: { valorTotal: 5000, valorPago: 2500, status: 'parcial', dataVencimento: '2023-11-20' }
-  },
-  { 
-    id: 2, titulo: "Retificação Sítio Boa Vista", local: "Zona Rural - MG", proprietario: "Maria Santos", 
-    dataCriacao: "2023-10-28", status: "concluido", tipo: "retificacao", area: 120.5, progresso: 100, 
-    vizinhos: [],
-    financeiro: { valorTotal: 12000, valorPago: 12000, status: 'quitado', dataVencimento: '2023-10-30' }
-  }
-];
-
 // --- COMPONENTE KPI ---
 const KpiCard = ({ valor, label, cor, isMoney = false }: { valor: string | number, label: string, cor: string, isMoney?: boolean }) => (
   <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '12px', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', borderBottom: `4px solid ${cor}` }}>
@@ -88,12 +70,25 @@ export default function DashboardTopografo({ onAbrirProjeto, onVoltar }: Dashboa
 
   // 1. CARREGAR
   useEffect(() => {
-    const salvos = localStorage.getItem('db_projetos_v2');
-    if (salvos) setProjetos(JSON.parse(salvos));
-    else {
-      setProjetos(MOCK_INICIAL);
-      localStorage.setItem('db_projetos_v2', JSON.stringify(MOCK_INICIAL));
-    }
+    const carregarProjetos = async () => {
+      try {
+        const token = localStorage.getItem('access_token');
+        const response = await fetch('/api/projetos', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          setProjetos(data);
+        } else {
+          console.error('Erro ao carregar projetos:', response.status);
+        }
+      } catch (error) {
+        console.error('Erro ao conectar com API:', error);
+      }
+    };
+    
+    carregarProjetos();
   }, []);
 
   // 2. SALVAR

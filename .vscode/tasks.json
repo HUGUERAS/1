@@ -28,6 +28,18 @@
 			"options": {
 				"cwd": "${workspaceFolder}/novo-projeto\\backend"
 			}
+		},
+		{
+			"label": "Build",
+			"type": "shell",
+			"command": "dotnet build",
+			"problemMatcher": "$sqlproj-problem-matcher",
+			"isBackground": true,
+			"group": {
+				"kind": "build",
+				"isDefault": "true"
+			},
+			"detail": "Builds the SQL project"
 		}
 	]
 }

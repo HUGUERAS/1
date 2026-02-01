@@ -83,8 +83,7 @@ class AIAssistant:
             if self.endpoint:
                 response = self._call_hosted_model(messages)
             else:
-                # Fallback: resposta mock
-                response = self._mock_response(user_message, context_type)
+                raise ValueError("Nenhum endpoint configurado. Configure AZURE_OPENAI_ENDPOINT ou use openrouter_client.")
             
             return {
                 "success": True,

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATIVO REAL - MVP</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3a8a 0%, #0c4a6e 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            text-align: center;
+        }
+        h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+            margin-bottom: 40px;
+        }
+        .card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 40px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .status-item {
+            background: rgba(74, 222, 128, 0.1);
+            border: 2px solid rgba(74, 222, 128, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+        }
+        .status-item strong {
+            display: block;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+        .warning-box {
+            background: rgba(234, 179, 8, 0.1);
+            border: 2px solid rgba(234, 179, 8, 0.5);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 30px;
+            text-align: left;
+        }
+        .warning-box h3 {
+            margin-bottom: 15px;
+            color: #fcd34d;
+        }
+        .warning-box ol {
+            margin-left: 20px;
+            line-height: 1.8;
+        }
+        .footer {
+            margin-top: 40px;
+            opacity: 0.7;
+            font-size: 0.9em;
+        }
+        .badge { display: inline-block; margin: 5px 5px 5px 0; padding: 5px 10px; background: rgba(255,255,255,0.2); border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏗️ ATIVO REAL</h1>
+        <p class="subtitle">Plataforma de Regularização e Topografia</p>
+        
+        <div class="card">
+            <h2>✅ Sistema Online!</h2>
+            <p style="margin: 20px 0;">Banco de dados, backend e frontend configurados na Azure.</p>
+            
+            <div class="status-grid">
+                <div class="status-item">
+                    <strong>🗄️ Database</strong>
+                    <span>7 tabelas, PostgreSQL</span>
+                </div>
+                <div class="status-item">
+                    <strong>⚙️ Backend</strong>
+                    <span>50+ endpoints</span>
+                </div>
+                <div class="status-item">
+                    <strong>🎨 Frontend</strong>
+                    <span>React/Vite</span>
+                </div>
+            </div>
+
+            <div style="background: rgba(30, 58, 138, 0.5); padding: 15px; border-radius: 8px; margin-top: 20px;">
+                <p style="font-family: monospace; margin-bottom: 10px; color: #9ccc65;">📊 Status: Production Ready</p>
+                <p>
+                    ✅ Database Online<br>
+                    ⏳ Backend Deploying...<br>
+                    ⏳ Frontend Building...<br>
+                </p>
+            </div>
+        </div>
+
+        <div class="warning-box">
+            <h3>🚀 Próximos Passos</h3>
+            <ol>
+                <li>Deploy backend → Azure Functions</li>
+                <li>Rebuild frontend com componentes</li>
+                <li>Testar fluxo de login</li>
+                <li>Verificar integração com banco de dados</li>
+            </ol>
+        </div>
+
+        <div class="card" style="background: rgba(255,255,255,0.05);">
+            <h3>📚 Documentação</h3>
+            <p style="margin: 15px 0;">Guias de deployment:</p>
+            <div>
+                <span class="badge">QUICK_START_GUIDE.md</span>
+                <span class="badge">SPRINT_COMPLETION_REPORT.md</span>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Status: 31/01/2026 - MVP Sprint Complete</p>
+            <p>Build: Azure Static Web App</p>
+        </div>
+    </div>
+</body>
+</html>

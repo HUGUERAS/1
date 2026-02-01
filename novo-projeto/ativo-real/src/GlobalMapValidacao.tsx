@@ -79,33 +79,29 @@ const mapStyles = {
   })
 };
 
-// --- DADOS MOCKADOS DO GOVERNO (SIGEF/FUNAI) ---
-const carregarDadosGovernamentais = () => {
-  // Simulação de áreas restritas próximas a Brasília
-  const areasRestritas = [
-    {
-      tipo: 'SIGEF',
-      nome: 'Fazenda Santa Maria - Matrícula 12345',
-      coords: [
-        [-47.89, -15.78], [-47.88, -15.78], [-47.88, -15.79], [-47.89, -15.79], [-47.89, -15.78]
-      ]
-    },
-    {
-      tipo: 'FUNAI',
-      nome: 'Terra Indígena Santuário dos Pajés',
-      coords: [
-        [-47.87, -15.80], [-47.86, -15.80], [-47.86, -15.81], [-47.87, -15.81], [-47.87, -15.80]
-      ]
+// --- CARREGAR DADOS DO GOVERNO (SIGEF/FUNAI) DA API ---
+const carregarDadosGovernamentais = async () => {
+  try {
+    const response = await fetch('/api/governo/areas');
+    
+    if (!response.ok) {
+      console.error('Erro ao carregar dados governamentais:', response.status);
+      return [];
     }
-  ];
-
-  return areasRestritas.map(area => {
-    return new GeoJSON().readFeature({
-      type: 'Feature',
-      geometry: { type: 'Polygon', coordinates: [area.coords] },
-      properties: { tipo: area.tipo, nome: area.nome }
-    }, { featureProjection: 'EPSG:3857' });
-  });
+    
+    const areas = await response.json();
+    
+    return areas.map((area: any) => {
+      return new GeoJSON().readFeature({
+        type: 'Feature',
+        geometry: { type: 'Polygon', coordinates: [area.coords] },
+        properties: { tipo: area.tipo, nome: area.nome }
+      }, { featureProjection: 'EPSG:3857' });
+    });
+  } catch (error) {
+    console.error('Erro ao conectar com API de governo:', error);
+    return [];
+  }
 };
 
 interface GlobalMapProps {
@@ -135,15 +131,17 @@ export default function GlobalMapValidacao({ userProfile: _userProfile, projetoI
   useEffect(() => {
     if (!mapRef.current) return;
 
-    // Carregar dados governamentais
-    const dadosGoverno = carregarDadosGovernamentais();
-    dadosGoverno.forEach(feature => {
-      if (Array.isArray(feature)) {
-        feature.forEach(f => governoSource.addFeature(f));
-      } else {
-        governoSource.addFeature(feature);
-      }
-    });
+    // Carregar dados governamentais (async)
+    (async () => {
+      const dadosGoverno = await carregarDadosGovernamentais();
+      dadosGoverno.forEach(feature => {
+        if (Array.isArray(feature)) {
+          feature.forEach(f => governoSource.addFeature(f));
+        } else {
+          governoSource.addFeature(feature);
+        }
+      });
+    })();
 
     const sateliteLayer = new TileLayer({ 
       source: new XYZ({ 

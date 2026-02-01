@@ -1,8 +1,75 @@
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, validator, EmailStr, Field
 from typing import List, Tuple, Optional, Any, Dict
 from datetime import datetime
 from uuid import UUID
 from enum import Enum
+
+# ==================== AUTH SCHEMAS ====================
+
+class UserRole(str, Enum):
+    ADMIN = "ADMIN"
+    TOPOGRAFO = "TOPOGRAFO"
+    CLIENTE = "CLIENTE"
+    AGRICULTOR = "AGRICULTOR"
+
+class LoginRequest(BaseModel):
+    """Esquema para request de login"""
+    email: EmailStr
+    password: str = Field(..., min_length=8)
+
+class LoginResponse(BaseModel):
+    """Esquema para response de login"""
+    access_token: str
+    refresh_token: str
+    token_type: str = "Bearer"
+    expires_in: int = 1800  # 30 minutos em segundos
+    user: Dict[str, Any]
+
+class RefreshTokenRequest(BaseModel):
+    """Esquema para refresh de token"""
+    refresh_token: str
+
+class UserBase(BaseModel):
+    """Base do usuário"""
+    name: str = Field(..., min_length=2, max_length=100)
+    email: EmailStr
+    role: UserRole = UserRole.CLIENTE
+    telefone: Optional[str] = None
+    cpf_cnpj: Optional[str] = None
+
+class UserCreate(UserBase):
+    """Criação de usuário (com senha)"""
+    password: str = Field(..., min_length=8, max_length=100)
+
+class UserUpdate(BaseModel):
+    """Atualização de usuário (campos opcionais)"""
+    name: Optional[str] = Field(None, min_length=2, max_length=100)
+    telefone: Optional[str] = None
+    cpf_cnpj: Optional[str] = None
+    avatar: Optional[str] = None
+
+class UserResponse(UserBase):
+    """Response do usuário (sem senha)"""
+    id: int
+    avatar: Optional[str] = None
+    is_active: bool
+    email_verified: bool
+    criado_em: datetime
+    ultimo_login: Optional[datetime] = None
+    
+    class Config:
+        from_attributes = True
+
+class PasswordChangeRequest(BaseModel):
+    """Troca de senha"""
+    current_password: str
+    new_password: str = Field(..., min_length=8, max_length=100)
+
+class PasswordResetRequest(BaseModel):
+    """Solicitação de reset de senha"""
+    email: EmailStr
+
+# ==================== ORIGINAL SCHEMAS ====================
 
 class LoteBase(BaseModel):
     matricula: str
@@ -97,9 +164,8 @@ class PlanoResponse(PlanoBase):
 
 
 class AssinaturaCreate(BaseModel):
-    """Schema para criar assinatura"""
+    """Schema para criar assinatura (usuario_id vem do JWT)"""
     plano_id: int
-    usuario_id: int
     metodo_pagamento: Optional[str] = None  # PIX, CARTAO, BOLETO
 
 

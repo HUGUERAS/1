@@ -6,13 +6,13 @@ import psycopg2
 from datetime import datetime
 import uuid
 import db_setup
-from infinitepay_payment import infinitepay_bp
+# from infinitepay_payment import infinitepay_bp  # TODO: Isolate InfinitePay until API key is configured
 
 # Configuração da App Function (Python v2 Model)
 app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
 
 # Registrar blueprint do InfinitePay
-app.register_functions(infinitepay_bp)
+# app.register_functions(infinitepay_bp)  # TODO: Enable once INFINITEPAY_API_KEY is set
 
 # Flag global para evitar checagem repetitiva no mesmo worker
 _SCHEMA_CHECKED = False

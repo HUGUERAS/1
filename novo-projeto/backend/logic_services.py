@@ -528,3 +528,128 @@ def registrar_evento_historico(
     db.commit()
     
     return historico
+
+
+# ==================== VALIDAÇÕES GEOESPACIAIS ADICIONAIS ====================
+
+def validate_lote_within_gleba(lote_wkt: str, projeto_id: int, db: Session) -> dict:
+    """
+    Valida se o lote está completamente dentro da gleba do projeto.
+    
+    Returns:
+        dict: {"valid": bool, "message": str, "area_fora_percent": float}
+    """
+    # Buscar geometria da gleba
+    stmt = text(f"""
+        SELECT ST_AsText(geom) 
+        FROM projetos 
+        WHERE id = :pid AND geom IS NOT NULL
+    """)
+    
+    gleba_result = db.execute(stmt, {"pid": projeto_id}).fetchone()
+    
+    if not gleba_result or not gleba_result[0]:
+        return {
+            "valid": True, 
+            "message": "Projeto sem gleba definida - validação ST_Within ignorada",
+            "area_fora_percent": 0.0
+        }
+    
+    gleba_wkt = gleba_result[0]
+    
+    # Verificar se está dentro
+    stmt_within = text(f"""
+        SELECT ST_Within(
+            ST_GeomFromText(:lote_wkt, {SRID_OFICIAL}),
+            ST_GeomFromText(:gleba_wkt, {SRID_OFICIAL})
+        )
+    """)
+    
+    is_within = db.execute(stmt_within, {
+        "lote_wkt": lote_wkt,
+        "gleba_wkt": gleba_wkt
+    }).scalar()
+    
+    if not is_within:
+        # Calcular % da área que está fora
+        stmt_diff = text(f"""
+            SELECT 
+                ST_Area(ST_Difference(
+                    ST_GeomFromText(:lote_wkt, {SRID_OFICIAL})::geography,
+                    ST_GeomFromText(:gleba_wkt, {SRID_OFICIAL})::geography
+                )) / 
+                ST_Area(ST_GeomFromText(:lote_wkt, {SRID_OFICIAL})::geography) * 100
+        """)
+        
+        area_fora_percent = db.execute(stmt_diff, {
+            "lote_wkt": lote_wkt,
+            "gleba_wkt": gleba_wkt
+        }).scalar() or 0.0
+        
+        return {
+            "valid": False,
+            "message": f"ERRO: {area_fora_percent:.1f}% do lote está fora da gleba do projeto",
+            "area_fora_percent": float(area_fora_percent)
+        }
+    
+    return {"valid": True, "message": "Lote está dentro da gleba", "area_fora_percent": 0.0}
+
+
+def get_confrontantes(lote_id: int, db: Session) -> list:
+    """
+    Retorna lista de lotes que compartilham divisa (ST_Touches) com o lote especificado.
+    
+    Returns:
+        list: [{"id": int, "nome_cliente": str, "shared_length_m": float}]
+    """
+    stmt = text(f"""
+        SELECT 
+            l2.id,
+            l2.nome_cliente,
+            ST_Length(
+                ST_Intersection(l1.geom::geography, l2.geom::geography)
+            ) as shared_length_m
+        FROM lotes l1
+        JOIN lotes l2 ON l1.projeto_id = l2.projeto_id
+        WHERE l1.id = :lote_id
+        AND l2.id != :lote_id
+        AND ST_Touches(l1.geom, l2.geom)
+        ORDER BY shared_length_m DESC
+    """)
+    
+    result = db.execute(stmt, {"lote_id": lote_id}).fetchall()
+    
+    confrontantes = []
+    for row in result:
+        confrontantes.append({
+            "id": row[0],
+            "nome_cliente": row[1] or "Cliente Não Informado",
+            "shared_length_m": round(float(row[2]), 2)
+        })
+    
+    return confrontantes
+
+
+def calcular_area_geodesica(wkt_geometry: str, db: Session) -> dict:
+    """
+    Calcula área e perímetro usando geografia geodésica (SIRGAS 2000).
+    
+    Returns:
+        dict: {"area_ha": float, "area_m2": float, "perimetro_m": float}
+    """
+    stmt_metrics = text(f"""
+        SELECT 
+            ST_Area(ST_GeomFromText(:wkt, {SRID_OFICIAL})::geography) as area_m2,
+            ST_Perimeter(ST_GeomFromText(:wkt, {SRID_OFICIAL})::geography) as perimetro_m
+    """)
+    
+    result = db.execute(stmt_metrics, {"wkt": wkt_geometry}).fetchone()
+    
+    area_m2 = float(result[0])
+    perimetro_m = float(result[1])
+    
+    return {
+        "area_ha": round(area_m2 / 10000.0, 4),
+        "area_m2": round(area_m2, 2),
+        "perimetro_m": round(perimetro_m, 2)
+    }
