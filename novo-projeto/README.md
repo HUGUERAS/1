@@ -2,71 +2,109 @@
 
 Plataforma de gestão fundiária e topografia com validação geométrica inteligente.
 
-## 🏗️ Arquitetura (Azure Native)
+## 🏗️ Arquitetura (Azure Native - Cloud-First)
 
-Este projeto foi reestruturado para ser Cloud-Native, utilizando o melhor do ecossistema Azure para performance e baixo custo.
+**⚠️ IMPORTANTE**: Este projeto NÃO usa localhost. Todo desenvolvimento é feito direto no Azure.
 
-*   **Frontend**: React + OpenLayers (Hospedado no **Azure Static Web Apps**)
-*   **Backend**: Python Serverless (**Azure Functions v2**)
-*   **Banco de Dados**: PostgreSQL com PostGIS (**Azure Database for PostgreSQL**)
+* **Frontend**: React + TypeScript + Ant Design + OpenLayers → **Azure Static Web Apps**
+* **Backend**: Python Serverless (Azure Functions v2)
+* **Banco de Dados**: PostgreSQL + PostGIS (Azure Database for PostgreSQL)
 
-### 🛡️ Diferenciais de Engenharia
+### 🛡️ Diferenciais
 
-1.  **Validação Geométrica no Backend**: O Frontend é apenas para desenho. A matemática pesada (interseções, sobreposições) é feita no Python usando `Shapely` e `GeoAlchemy2` antes de salvar no banco.
-2.  **Topologia Rígida**: O banco de dados (PostGIS) possui constraints `CHECK(ST_IsValid(geom))` para impedir dados corrompidos.
-3.  **Separação de Preocupações**:
-    *   `frontend/`: Apenas visualização e captura de input.
-    *   `backend/logic_services.py`: Regras de negócio puras (testáveis).
-    *   `backend/function_app.py`: Camada de adaptação HTTP (Azure Functions).
+1. **Validação Geométrica no Backend**: Matemática pesada (Shapely + GeoAlchemy2)
+2. **Topologia Rígida**: Constraints `CHECK(ST_IsValid(geom))`
+3. **Single-Page Application**: Cliente vê tudo em 1 página só (7 abas)
 
-## 📂 Estrutura do Projeto
+## 📂 Estrutura
 
 ```
 novo-projeto/
-├── backend/                  # Azure Functions (Python)
-│   ├── function_app.py       # Entrypoint da API
-│   ├── logic_services.py     # Lógica de Negócios (Validação de Sobreposição)
-│   ├── models.py             # Modelos de Banco (SQLAlchemy)
-│   └── tests/                # Testes Unitários
-├── frontend/                 # React App (Vite)
-│   ├── src/components/MapEditor.jsx  # Editor com OpenLayers e Snap
-│   └── staticwebapp.config.json      # Configuração de Rotas do Azure
-└── database/                 # Scripts SQL
-    └── init/01_schema.sql    # Schema PostGIS inicial
+├── ativo-real/              ✅ FRONTEND OFICIAL (React + TS)
+│   └── src/
+│       ├── components/      → ClientPortal (SINGLE PAGE)
+│       ├── pages/           → LoginPage, Dashboards
+│       └── App.tsx          → Rotas: / | /dashboard | /client/:token
+├── backend/                 ✅ BACKEND OFICIAL (Azure Functions)
+├── database/                ✅ SQL SCRIPTS (PostGIS)
+├── frontend-legacy/         ⚠️  IGNORAR (versão antiga)
+├── .archive/                📦 Docs históricos
+├── README.md               📖 Este arquivo
+├── ARCHITECTURE_SPECS.md   🏗️  Referência técnica
+└── PROJECT_STATUS.md       📊 Status atual
 ```
 
-## 🚀 Como Rodar Localmente
+## 🚀 Deploy no Azure (Único Método)
 
-### Pré-requisitos
-*   Node.js 18+
-*   Python 3.11+
-*   Azure Functions Core Tools (`npm i -g azure-functions-core-tools@4`)
-*   Azure Static Web Apps CLI (`npm i -g @azure/static-web-apps-cli`)
-*   PostgreSQL com PostGIS instalado localmente
-
-### 1. Configurar Banco de Dados
-Crie um banco local chamado `ativoreal_geo` e rode o script `database/init/01_schema.sql`.
-
-### 2. Iniciar Aplicação Híbrida (Front + Back)
-Na raiz do projeto (`novo-projeto`), rode:
+### 1. Criar Azure Static Web App
 
 ```bash
-swa start frontend --api-location backend
+az login
+
+az staticwebapp create \
+  --name ativo-real-prod \
+  --resource-group seu-resource-group \
+  --source https://github.com/seu-usuario/seu-repo \
+  --location "East US 2" \
+  --branch main \
+  --app-location "ativo-real" \
+  --api-location "backend" \
+  --output-location "dist"
 ```
 
-Isso vai iniciar:
-*   Frontend em `http://localhost:4280`
-*   Backend em `http://localhost:7071`
-*   Proxy de API em `http://localhost:4280/api`
+### 2. Criar PostgreSQL
 
-> **Nota**: Certifique-se de configurar a variável de ambiente `DATABASE_URL` no terminal onde for rodar o comando, ou crie um `local.settings.json` na pasta `backend`.
+```bash
+az postgres flexible-server create \
+  --name ativo-real-db \
+  --resource-group seu-resource-group \
+  --location "East US 2" \
+  --admin-user dbadmin \
+  --admin-password "SuaSenhaSegura123!" \
+  --sku-name Standard_B1ms \
+  --version 14 \
+  --storage-size 32
+```
 
-## ☁️ Deploy no Azure
+### 3. Configurar Variáveis (Azure Portal)
 
-1.  Crie um recurso **Azure Static Web Apps** no portal.
-2.  Conecte ao seu repositório GitHub.
-3.  Nas configurações de Build:
-    *   **App Location**: `frontend`
-    *   **Api Location**: `backend`
-    *   **Output Location**: `dist`
-4.  Configure as "Application Settings" no Portal do Azure com sua `DATABASE_URL` do PostgreSQL de produção.
+| Variável | Obrigatório |
+|----------|-------------|
+| `DATABASE_URL` | ✅ Sim |
+| `JWT_SECRET` | ✅ Sim |
+| `OPENROUTER_API_KEY` | ⚠️ Opcional |
+| `INFINITEPAY_API_KEY` | ⚠️ Opcional |
+
+### 4. Deploy Automático
+
+```bash
+git push origin main
+# GitHub Actions → Deploy automático
+```
+
+## 🎯 Fluxo de Trabalho
+
+1. **Desenvolver** → Editar código localmente
+2. **Commitar** → `git add . && git commit -m "feat: nova funcionalidade"`
+3. **Deployar** → `git push origin main`
+4. **Testar** → Acessar `https://seu-app.azurestaticapps.net`
+
+## 📊 Status
+
+Ver **PROJECT_STATUS.md**
+
+**Resumo**:
+
+* ✅ Backend: 90% (12 endpoints, JWT, AI, PostGIS)
+* ✅ Frontend: 85% (Single-page client, dashboards)
+* ✅ Database: 100% (Schema completo)
+
+## 📚 Documentação
+
+* **PROJECT_STATUS.md** - O que está pronto
+* **ARCHITECTURE_SPECS.md** - Decisões técnicas
+* **.agents/CONSTRAINTS.md** - Regras absolutas
+
+---
+
+**Desenvolvido 100% Cloud-Native com Azure** 🚀

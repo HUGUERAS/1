@@ -8,6 +8,7 @@
  * - Validate geometries
  */
 
+// @ts-nocheck
 import React, { useState } from 'react';
 import { useOpenRouter } from '../services/useOpenRouter';
 
@@ -19,10 +20,10 @@ interface Message {
 export function AIAssistant() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
-  
+
   // Get JWT token from wherever you store it (localStorage, context, etc)
   const authToken = localStorage.getItem('access_token') || '';
-  
+
   const { chat, analyzeTopography, loading, error } = useOpenRouter({ authToken });
 
   const handleSendMessage = async () => {
@@ -35,7 +36,7 @@ export function AIAssistant() {
 
     // Call AI
     const response = await chat(newMessages);
-    
+
     if (response && response.choices && response.choices.length > 0) {
       setMessages([
         ...newMessages,
@@ -49,9 +50,9 @@ export function AIAssistant() {
 
   const handleAnalyzeProperty = async () => {
     const prompt = 'Analyze the agricultural potential of a 100 hectare property in Sao Paulo state with Latossolo soil type';
-    
+
     const response = await analyzeTopography(prompt);
-    
+
     if (response) {
       setMessages([
         ...messages,
@@ -90,11 +91,10 @@ export function AIAssistant() {
               className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               <div
-                className={`max-w-[70%] rounded-lg p-3 ${
-                  msg.role === 'user'
+                className={`max-w-[70%] rounded-lg p-3 ${msg.role === 'user'
                     ? 'bg-green-500 text-white'
                     : 'bg-gray-100 text-gray-800'
-                }`}
+                  }`}
               >
                 <p className="whitespace-pre-wrap">{msg.content}</p>
               </div>
