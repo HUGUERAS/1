@@ -133,7 +133,7 @@ novo-projeto/
 - State: React Hooks + local component state (context for shared state if needed)
 - File handling: KML (new KML()), Shapefile (shpjs library), GeoJSON
 - API calls: Always use `/api/` prefix (SWA routing handles backend proxy)
-@@- **Component architecture**: Keep individual features modular (15+ components is normal for complex UI with map, forms, controls). Avoid monolithic mega-components; split by responsibility.
+- **Component architecture**: Keep individual features modular (15+ components is normal for complex UI with map, forms, controls). Avoid monolithic mega-components; split by responsibility.
 
 ## 🔐 Auth & Roles
 
@@ -180,9 +180,9 @@ Core tables:
 - **OpenRouter**: Internal backend tool for data analysis (not exposed to users)
 
 ## ⚠️ Anti-Patterns (Never Do This!)
-@@- **Gov APIs (SIGEF/CAR/FUNAI)**: NO direct API integration in MVP. Visualization via WMS layer URLs only. **Fallback strategy**: If gov APIs fail, apply WMS URLs manually - do NOT block functionality due to external service unavailability. Future phases may add direct API integration.
 
- ❌ Single framework enforced (Flask, Django, FastAPI) → Azure Functions only, unless substantial architectural improvement justifies deviation (then document trade-offs)
+- **Gov APIs (SIGEF/CAR/FUNAI)**: NO direct API integration in MVP. Visualization via WMS layer URLs only. **Fallback strategy**: If gov APIs fail, apply WMS URLs manually - do NOT block functionality due to external service unavailability. Future phases may add direct API integration.
+- ❌ Single framework enforced (Flask, Django, FastAPI) → Azure Functions only, unless substantial architectural improvement justifies deviation (then document trade-offs)
 
 ## 🎯 Current Implementation Priorities
 
@@ -200,5 +200,5 @@ Auth, Projects CRUD, Clients CRUD, Lots CRUD, WMS layers, Neighbors (PostGIS que
 - Gov API direct integration (currently WMS visualization only)
 - Advanced reporting/analytics
 - Mobile native app
-@@- **Role-based visibility**: Topographer sees ONLY projects they created (not all system projects)
-@@- **Token expiry**: 30 min default for sessions (customizable for specific workflows)
+- **Role-based visibility**: Topographer sees ONLY projects they created (not all system projects)
+- **Token expiry**: 30 min default for sessions (customizable for specific workflows)
