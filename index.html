@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Ativo Real - Plataforma de gestão fundiária e topografia com validação geométrica inteligente">
+    <meta name="keywords" content="topografia, geoprocessamento, SIGEF, CAR, INCRA, regularização fundiária">
+    <title>Ativo Real - GeoPlatform | Topografia e Geoprocessamento</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-blue: #001F3F;
+            --bronze: #CD7F32;
+            --titanium: #B0B0B0;
+            --light-bg: #f5f7fa;
+            --white: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: var(--light-bg);
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, #003366 100%);
+            color: var(--white);
+            padding: 4rem 2rem;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo-container {
+            max-width: 200px;
+            margin: 0 auto 2rem;
+        }
+
+        .logo-container img {
+            width: 100%;
+            height: auto;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .tagline {
+            font-size: 1.25rem;
+            opacity: 0.95;
+            font-weight: 300;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .hero {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 3rem;
+            margin: -3rem auto 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 10;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background-color: var(--bronze);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background-color: #b36d28;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(205, 127, 50, 0.3);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--primary-blue);
+            border: 2px solid var(--primary-blue);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--primary-blue);
+            color: var(--white);
+            transform: translateY(-2px);
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .feature-card {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .feature-card h3 {
+            color: var(--primary-blue);
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .tech-stack {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 3rem;
+            margin: 3rem 0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .tech-stack h2 {
+            color: var(--primary-blue);
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 2rem;
+        }
+
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            text-align: center;
+        }
+
+        .tech-item {
+            padding: 1rem;
+            background: var(--light-bg);
+            border-radius: 8px;
+            font-weight: 600;
+            color: var(--primary-blue);
+        }
+
+        .status-section {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, #003366 100%);
+            color: var(--white);
+            border-radius: 12px;
+            padding: 3rem;
+            margin: 3rem 0;
+            text-align: center;
+        }
+
+        .status-section h2 {
+            margin-bottom: 2rem;
+            font-size: 2rem;
+        }
+
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .status-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
+        }
+
+        .status-percentage {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--bronze);
+        }
+
+        .status-label {
+            font-size: 1.2rem;
+            margin-top: 0.5rem;
+        }
+
+        footer {
+            background: var(--primary-blue);
+            color: var(--white);
+            text-align: center;
+            padding: 2rem;
+            margin-top: 4rem;
+        }
+
+        footer a {
+            color: var(--bronze);
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .tagline {
+                font-size: 1rem;
+            }
+
+            .hero {
+                padding: 2rem;
+                margin: -2rem auto 2rem;
+            }
+
+            .features {
+                grid-template-columns: 1fr;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <img src="/logos/logo-oficial.png" alt="Ativo Real Logo" onerror="this.style.display='none'">
+        </div>
+        <h1>Ativo Real</h1>
+        <p class="tagline">A tecnologia que conecta seu patrimônio à regularidade</p>
+    </header>
+
+    <div class="container">
+        <div class="hero">
+            <h2 style="color: var(--primary-blue); margin-bottom: 1rem; font-size: 2rem;">Plataforma de Gestão Fundiária e Topografia</h2>
+            <p style="font-size: 1.1rem; line-height: 1.8; color: #666;">
+                <strong>Ativo Real</strong> é uma plataforma completa de topografia e geoprocessamento para gestão de ativos rurais e urbanos. 
+                Oferecemos ferramentas profissionais para topógrafos, proprietários e agricultores gerenciarem regularizações fundiárias, 
+                CAR (Cadastro Ambiental Rural) e certificações INCRA/SIGEF com validação geométrica inteligente.
+            </p>
+            <div class="cta-buttons">
+                <a href="https://gray-plant-08ef6cf0f.2.azurestaticapps.net" class="btn btn-primary" target="_blank">🌐 Acessar Demo</a>
+                <a href="https://github.com/HUGUERAS/1" class="btn btn-secondary" target="_blank">📚 Ver no GitHub</a>
+            </div>
+        </div>
+
+        <div class="features">
+            <div class="feature-card">
+                <span class="feature-icon">🗺️</span>
+                <h3>Mapa Interativo</h3>
+                <p>OpenLayers com ferramentas de desenho, edição de vértices, snap automático e análise de sobreposições com SIGEF/INCRA/CAR.</p>
+            </div>
+
+            <div class="feature-card">
+                <span class="feature-icon">📐</span>
+                <h3>Ferramentas Topográficas</h3>
+                <p>Estação total virtual, medições angulares, conversão de coordenadas (UTM ↔ Lat/Lon) e geração automática de memorial descritivo.</p>
+            </div>
+
+            <div class="feature-card">
+                <span class="feature-icon">💰</span>
+                <h3>Pagamentos Integrados</h3>
+                <p>Gateway InfinitePay com PIX, Cartão e Boleto. Taxa de 0.99% por transação com confirmação automática via webhook.</p>
+            </div>
+
+            <div class="feature-card">
+                <span class="feature-icon">🤖</span>
+                <h3>AI Assistant</h3>
+                <p>Chatbot com contexto técnico incluindo área, coordenadas e dados SIGEF para auxiliar nas operações topográficas.</p>
+            </div>
+
+            <div class="feature-card">
+                <span class="feature-icon">📊</span>
+                <h3>Relatórios Técnicos</h3>
+                <p>Exportação em PDF, KML e JSON. Layout conforme NBR 13.133 com tabelas de coordenadas e análise de sobreposições.</p>
+            </div>
+
+            <div class="feature-card">
+                <span class="feature-icon">☁️</span>
+                <h3>100% Cloud Native</h3>
+                <p>Arquitetura serverless no Azure com alta disponibilidade, escalabilidade automática e segurança enterprise.</p>
+            </div>
+        </div>
+
+        <div class="tech-stack">
+            <h2>🛠️ Stack Tecnológica</h2>
+            <div class="tech-grid">
+                <div class="tech-item">React 19</div>
+                <div class="tech-item">TypeScript</div>
+                <div class="tech-item">OpenLayers 10.7</div>
+                <div class="tech-item">Azure Functions</div>
+                <div class="tech-item">Python 3.11</div>
+                <div class="tech-item">PostgreSQL + PostGIS</div>
+                <div class="tech-item">Azure Static Web Apps</div>
+                <div class="tech-item">Tailwind CSS</div>
+                <div class="tech-item">Vite</div>
+            </div>
+        </div>
+
+        <div class="status-section">
+            <h2>📊 Status do Projeto</h2>
+            <p style="font-size: 1.1rem; margin-bottom: 1rem;">Projeto em desenvolvimento ativo com componentes principais implementados</p>
+            <div class="status-grid">
+                <div class="status-item">
+                    <div class="status-percentage">90%</div>
+                    <div class="status-label">Backend</div>
+                    <p style="font-size: 0.9rem; margin-top: 0.5rem; opacity: 0.9;">12 endpoints REST com JWT e PostGIS</p>
+                </div>
+                <div class="status-item">
+                    <div class="status-percentage">85%</div>
+                    <div class="status-label">Frontend</div>
+                    <p style="font-size: 0.9rem; margin-top: 0.5rem; opacity: 0.9;">Single-page client e dashboards</p>
+                </div>
+                <div class="status-item">
+                    <div class="status-percentage">100%</div>
+                    <div class="status-label">Database</div>
+                    <p style="font-size: 0.9rem; margin-top: 0.5rem; opacity: 0.9;">Schema completo com PostGIS</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="hero" style="margin-top: 3rem;">
+            <h2 style="color: var(--primary-blue); margin-bottom: 1rem; font-size: 2rem;">🎯 Perfis de Usuário</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-top: 2rem; text-align: left;">
+                <div>
+                    <h3 style="color: var(--bronze); margin-bottom: 0.5rem;">🔧 Topógrafo</h3>
+                    <p style="color: #666;">Ferramentas técnicas de desenho, medição e geração de relatórios NBR 13.133</p>
+                </div>
+                <div>
+                    <h3 style="color: var(--bronze); margin-bottom: 0.5rem;">🏠 Proprietário</h3>
+                    <p style="color: #666;">Acompanhamento da regularização de imóveis com validações automáticas</p>
+                </div>
+                <div>
+                    <h3 style="color: var(--bronze); margin-bottom: 0.5rem;">🚜 Agricultor</h3>
+                    <p style="color: #666;">Gestão de CAR, áreas produtivas e sobreposições ambientais</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Ativo Real - Todos os direitos reservados</p>
+        <p style="margin-top: 1rem;">
+            Desenvolvido 100% Cloud-Native com Azure 🚀 | 
+            <a href="https://github.com/HUGUERAS/1" target="_blank">GitHub</a> | 
+            <a href="https://gray-plant-08ef6cf0f.2.azurestaticapps.net" target="_blank">Demo Live</a>
+        </p>
+    </footer>
+</body>
+</html>
