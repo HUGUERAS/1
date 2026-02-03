@@ -1,0 +1,21 @@
+# Node modules
+node_modules/
+
+# Project files not needed for website
+novo-projeto/
+yy/
+
+# Azure files
+__azurite_db_*.json
+AzuriteConfig
+
+# Development files
+*.ps1
+*.bat
+.vscode/
+.github/
+.agents/
+
+# Git
+.git/
+.gitignore
